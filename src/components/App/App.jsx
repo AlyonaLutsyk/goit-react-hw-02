@@ -6,27 +6,22 @@ import Description from '../Description/Description';
 import styles from './App.module.css';
 
 export default function App() {
-  const [feedback, setFeedback] = useState({
-    good: 0,
-    neutral: 0,
-    bad: 0,
+  const [feedback, setFeedback] = useState(() => {
+    const savedFeedback = localStorage.getItem('feedback');
+    return savedFeedback ? JSON.parse(savedFeedback) : { good: 0, neutral: 0, bad: 0 };
   });
     
     
   useEffect(() => {
-    const savedFeedback = JSON.parse(localStorage.getItem("feedback"));
-    if (savedFeedback) {
-      setFeedback(savedFeedback);
-    }
-  }, []);
-
-    
-  useEffect(() => {
-    window.localStorage.setItem("feedback", JSON.stringify(feedback));
+    localStorage.setItem('feedback', JSON.stringify(feedback));
   }, [feedback]);
 
+    
   const updateFeedback = (feedbackType) => {
-    setFeedback({ ...feedback, [feedbackType]: feedback[feedbackType] + 1 });
+    setFeedback((prevFeedback) => ({
+      ...prevFeedback,
+      [feedbackType]: prevFeedback[feedbackType] + 1,
+    }));
   };
 
   const resetFeedback = () => {
